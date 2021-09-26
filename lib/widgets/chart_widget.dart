@@ -32,7 +32,7 @@ class ChartWidget extends StatelessWidget {
       }
 
       return {'day': initialsWeekDay, 'value': totalSum};
-    });
+    }).reversed.toList();
   }
 
   double get _weekTotalValue {
@@ -46,15 +46,22 @@ class ChartWidget extends StatelessWidget {
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: groupedTransactions.map((tr) {
-          return ChartBarWidget(
-            label: tr['day'].toString(),
-            value: tr['value'] as double,
-            percentage: (tr['value'] as double) / _weekTotalValue,
-          );
-        }).toList(),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactions.map((tr) {
+            return Expanded(
+              child: ChartBarWidget(
+                label: tr['day'].toString(),
+                value: tr['value'] as double,
+                percentage: _weekTotalValue == 0
+                    ? 0
+                    : (tr['value'] as double) / _weekTotalValue,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

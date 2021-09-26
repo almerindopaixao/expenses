@@ -17,21 +17,26 @@ class ExpensesApp extends StatelessWidget {
     return MaterialApp(
       home: const MyHomePage(),
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.purple, accentColor: Colors.amber),
-          fontFamily: 'Quicksand',
-          textTheme: ThemeData.light().textTheme.copyWith(
-                headline6: const TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-          appBarTheme: const AppBarTheme(
-            titleTextStyle: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
-          )),
+        colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.purple, accentColor: Colors.amber),
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+            headline6: const TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            button: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }
@@ -44,26 +49,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: 't0',
-      title: 'Conta antiga',
-      date: DateTime.now().subtract(const Duration(days: 33)),
-      value: 400.00,
-    ),
-    Transaction(
-      id: 't1',
-      title: 'Novo tênis de Corrida',
-      date: DateTime.now().subtract(const Duration(days: 3)),
-      value: 310.76,
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Conta de Luz',
-      date: DateTime.now().subtract(const Duration(days: 4)),
-      value: 211.30,
-    ),
-  ];
+  final List<Transaction> _transactions = [];
 
   List<Transaction> get _recentTranscations {
     return _transactions.where((tr) {
@@ -71,12 +57,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addTranscation({required String title, required double value}) {
+  void _addTranscation({
+    required String title,
+    required double value,
+    required DateTime date,
+  }) {
     final newTransaction = Transaction(
-        id: Random().nextDouble().toString(),
-        title: title,
-        value: value,
-        date: DateTime.now());
+      id: Random().nextDouble().toString(),
+      title: title,
+      value: value,
+      date: date,
+    );
 
     setState(() {
       _transactions.add(newTransaction);
@@ -85,12 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
+  void _removeTransaction({required String id}) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
+  }
+
   void _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return TransactionFormWidget(onSubmit: _addTranscation);
-        });
+      context: context,
+      builder: (_) {
+        return TransactionFormWidget(
+          onSubmit: _addTranscation,
+        );
+      },
+    );
   }
 
   @override
@@ -110,7 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChartWidget(recentTransaction: _recentTranscations),
-            TransactionListWidget(transactions: _transactions),
+            TransactionListWidget(
+              transactions: _transactions,
+              onRemove: _removeTransaction,
+            ),
           ],
         ),
       ),
