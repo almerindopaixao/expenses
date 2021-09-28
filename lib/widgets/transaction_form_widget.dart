@@ -11,19 +11,48 @@ class TransactionFormWidget extends StatefulWidget {
     required DateTime date,
   }) onSubmit;
 
-  const TransactionFormWidget({
+  TransactionFormWidget({
     Key? key,
     required this.onSubmit,
-  }) : super(key: key);
+  }) : super(key: key) {
+    print('Constructor TransactionFormWidget');
+  }
 
   @override
-  State<TransactionFormWidget> createState() => _TransactionFormWidgetState();
+  State<TransactionFormWidget> createState() {
+    print('CreateState TransactionFormWidget');
+    return _TransactionFormWidgetState();
+  }
 }
 
 class _TransactionFormWidgetState extends State<TransactionFormWidget> {
   final _titleController = TextEditingController();
   final _valueController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+
+  _TransactionFormWidgetState() {
+    print('Constructor TransactionFormWidget');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    print('initState _TransactionFormWidgetState');
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionFormWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget _TransactionFormWidgetState');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    print('dispose _TransactionFormWidgetState');
+  }
 
   void _submitForm() {
     final title = _titleController.text;
